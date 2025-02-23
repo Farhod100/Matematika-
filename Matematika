@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matematika o‘yini</title>
+</head>
+<body>
+    <h1>Matematika o‘yini</h1>
+    <p id="question"></p>
+    <input type="number" id="answer">
+    <button onclick="checkAnswer()">Tekshirish</button>
+    <p>Ball: <span id="score">0</span></p>
+    <p>Vaqt: <span id="timer">30</span> soniya</p>
+    <p id="feedback"></p>
+    
+    <button id="restart" onclick="restartGame()" style="display: none;">Qayta boshlash</button>
+
+    <script>
+        let score = 0;
+        let timeLeft = 30;
+        let correctAnswer;
+        let timerInterval;
+        let gameOver = false; // O‘yin tugaganini belgilash
+
+        function generateQuestion() {
+            if (gameOver) return; // O‘yin tugagan bo‘lsa, yangi savol bermaydi
+            let num1 = Math.floor(Math.random() * 10) + 1;
+            let num2 = Math.floor(Math.random() * 10) + 1;
+            correctAnswer = num1 + num2;
+            document.getElementById('question').innerText = `${num1} + ${num2} = ?`;
+        }
+
+        function checkAnswer() {
+            if (gameOver) return; // Agar o‘yin tugagan bo‘lsa, hech narsa qilmasin
+            let userAnswer = parseInt(document.getElementById('answer').value);
+            if (userAnswer === correctAnswer) {
+                score++;
+                document.getElementById('score').innerText = score;
+                document.getElementById('feedback').innerText = "To‘g‘ri!";
+            } else {
+                document.getElementById('feedback').innerText = "Noto‘g‘ri.";
+            }
+            document.getElementById('answer').value = "";
+            generateQuestion();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 30;
+            document.getElementById('timer').innerText = timeLeft;
+            gameOver = false; // O‘yin davom etyapti
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    gameOver = true; // O‘yin tugadi
+                    alert(`O‘yin tugadi! Sizning ballingiz: ${score}`);
+                    document.getElementById('restart').style.display = "block";
+                }
+            }, 1000);
+        }
+
+        function restartGame() {
+            score = 0;
+            document.getElementById('score').innerText = score;
+            document.getElementById('feedback').innerText = "";
+            document.getElementById('restart').style.display = "none";
+            generateQuestion();
+            startTimer();
+        }
+
+        generateQuestion();
+        startTimer();
+    </script>
+</body>
+</html>
